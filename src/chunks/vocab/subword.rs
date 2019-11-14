@@ -428,7 +428,7 @@ where
     R: Read + Seek,
 {
     let mut ngrams = Vec::with_capacity(len);
-    for _ in 0..len {
+    for i in 0..len {
         let ngram_len = read
             .read_u32::<LittleEndian>()
             .map_err(|e| ErrorKind::io_error("Cannot read item length", e))?
@@ -439,9 +439,7 @@ where
         let item = String::from_utf8(bytes)
             .map_err(|e| ErrorKind::Format(format!("Item contains invalid UTF-8: {}", e)))
             .map_err(Error::from)?;
-        let idx = read
-            .read_u64::<LittleEndian>()
-            .map_err(|e| ErrorKind::io_error("Cannot read ngram index.", e))?;
+        let idx = i as u64;
         ngrams.push((item, idx));
     }
     Ok(ngrams)
